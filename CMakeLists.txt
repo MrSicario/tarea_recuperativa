@@ -7,9 +7,9 @@ add_compile_options(
 )
 
 add_executable(main.cpp
-        src/cpp/lib/perfect_hash/PerfectHash.hpp
-        src/cpp/lib/perfect_hash/PerfectHash.hpp
-        src/cpp/lib/perfect_hash/PrimeGen.hpp
-        src/cpp/lib/perfect_hash/PrimeGen.hpp
+        src/cpp/lib/PerfectHash.hpp
+        src/cpp/lib/PerfectHash.hpp
+        src/cpp/lib/PrimeGen.hpp
+        src/cpp/lib/PrimeGen.hpp
         src/cpp/main.cpp
 )
