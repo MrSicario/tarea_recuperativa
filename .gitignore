@@ -1,2 +1,4 @@
+.vscode/
 enunciado.pdf
 example.cpp
+*.o
