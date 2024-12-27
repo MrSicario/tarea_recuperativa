@@ -11,7 +11,7 @@ namespace hashlib
         this->k = k;
         this->c = c;
         this->m = k*n;
-        this->p = (1<<31) - 1;
+        this->p = ((unsigned long long)(1<<31) - 1);
         bool finished_table = false;
         while (!finished_table)
         {
@@ -28,7 +28,8 @@ namespace hashlib
                     continue;
                 int B_i_size = B_i.size() * B_i.size() * c;
                 total_size += total_size + B_i_size;
-                std::vector<std::size_t> tmp(B_i_size, NULL);
+                std::vector<std::size_t> tmp(B_i_size);
+                std::vector<bool> hashed(B_i_size, false);
                 this->B.push_back(tmp);
                 bool finished_B = false;
                 while (!finished_B) 
@@ -37,10 +38,13 @@ namespace hashlib
                     for (int j=0; j<B_i.size(); j++)
                     {
                         auto hash = h_i(B_i[j], i);
-                        if (this->B.back().at(hash) != NULL)
+                        if (hashed.at(hash))
                             break;
                         else
+                        {   
+                            hashed.at(hash) = true;
                             this->B.back().at(hash) = B_i[j];
+                        }
                         finished_B = true;
                     }
                 }

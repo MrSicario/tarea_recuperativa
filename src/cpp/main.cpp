@@ -6,7 +6,6 @@
 #include <functional> // bind
 #include <iostream>
 #include "lib/PerfectHash.hpp"
-#include "lib/PrimeGen.hpp"
 
 using std::cout,
     std::endl,
