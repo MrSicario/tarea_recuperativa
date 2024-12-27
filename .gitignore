@@ -1,5 +1,6 @@
 .vscode/
 build/
+Debug/
 enunciado.pdf
 example.cpp
 *.o
