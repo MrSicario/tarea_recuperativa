@@ -31,8 +31,9 @@ vector<u64> create_random_data(int n) {
     std::seed_seq      seed{r(), r(), r(), r(), r(), r(), r(), r()};
     std::mt19937       eng(seed); // a source of random data    
     std::uniform_int_distribution<u64> dist;
-    vector<u64> v(n);   
+    vector<u64> v(n);
     generate(begin(v), end(v), bind(dist, eng));
+    std::sort(v.begin(), v.end());
     return v;
 }
 
@@ -48,18 +49,20 @@ void exp1()
         {1000000, "10⁶"},
         {10000000, "10⁷"}
     };
-    println("Experimento 1:");
+    println("Experimento 1: n in [10, 10⁷], k=4, c=1;");
     println("==============");
-    println("n in [10, 10⁷], k=4, c=1;");
     for (int n=10; n<100000000; n*=10)
     {
+        println("Generating S -> |S| = n = {0}", ten_pow_dict[n]);
         vector<u64> S = create_random_data(n);
         PerfectHash hash_table;
+        println("Building hashtable...");
         auto start = high_resolution_clock::now();
         hash_table.build(S, 4, 1);
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<milliseconds>(stop-start);
-        println("\tn={0} => {1}s", ten_pow_dict[n], duration.count()/(float)1000);
+        println(" => {1}s", ten_pow_dict[n], duration.count()/(float)1000);
+        println("--");
     }
 }
 

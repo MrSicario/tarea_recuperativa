@@ -14,7 +14,7 @@ namespace lib
         this->k = k;
         this->c = c;
         this->m = k*n;
-        this->base_prime = nextPrime(n);
+        this->base_prime = nextPrime(nums.back());
         this->hashTable.resize(this->m);
         this->B.resize(this->m);
         bool finished_table = false;
@@ -35,28 +35,44 @@ namespace lib
                 std::vector<std::uint64_t> B_i(B_i_size);
                 this->B[i].resize(B_i_size);
                 total_size += B_i_size;
-                std::uint64_t max = *std::max_element(bucket.begin(), bucket.end());
-                std::uint64_t prime = nextPrime(max);
-                bool finished_B = false;
-                while (!finished_B) 
+                if (bucket.size() == 1)
                 {
-                    finished_B = true;
-                    std:uint64_t a_i = rand_a(prime), b_i = rand_b(prime);
-                    this->hashTable[i] = {a_i, b_i, prime};
-                    std::vector<bool> hashed(B_i_size, false);
-                    for (int j=0; j<bucket.size(); j++)
+                    std::uint64_t a_i = rand_a(), b_i = rand_b();
+                    this->hashTable[i] = {a_i, b_i, this->base_prime};
+                    B_i[h_i(bucket.back(), i)] = bucket.back();
+                }
+                else
+                {
+                    std::uint64_t prime = nextPrime(bucket.back());
+                    bool finished_B = false;
+                    while (!finished_B) 
                     {
-                        std::uint64_t hash = h_i(bucket[j], i);
-                        if (hashed.at(hash))
+                        finished_B = true;
+                        std::uint64_t a_i = rand_a(prime), b_i = rand_b(prime);
+                        this->hashTable[i] = {a_i, b_i, prime};
+                        std::vector<bool> hashed(B_i_size, false);
+                        for (int j=0; j<bucket.size(); j++)
                         {
-                            finished_B = false;
-                            B_i.clear();
-                            break;
-                        }
-                        else
-                        {   
-                            hashed.at(hash) = true;
-                            B_i[hash] = bucket[j];
+                            std::uint64_t hash = h_i(bucket[j], i);
+                            if (hashed.at(hash))
+                            {
+                                /*
+                                Como los datos son generados al azar,
+                                existe la chance de que haya una cantidad de
+                                elementos repetidos que romperian el esquema
+                                del algoritmo.
+                                */
+                                if (B_i[hash]==bucket[j])
+                                    continue;
+                                finished_B = false;
+                                B_i.clear();
+                                break;
+                            }
+                            else
+                            {   
+                                hashed.at(hash) = true;
+                                B_i[hash] = bucket[j];
+                            }
                         }
                     }
                 }
