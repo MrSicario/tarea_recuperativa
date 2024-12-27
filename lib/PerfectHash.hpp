@@ -14,13 +14,14 @@ namespace lib
         std::vector<std::vector<std::uint64_t>> B;
         std::random_device rd;
         std::mt19937 rng{rd()};
-    public:
-        void build(const std::vector<std::uint64_t> &nums, std::uint64_t k, std::uint64_t c);
+        std::uint64_t rand_(std::uint64_t min, std::uint64_t max);
+        std::uint64_t rand_a(std::uint64_t prime = 0);
+        std::uint64_t rand_b(std::uint64_t prime = 0);
         std::uint64_t h(std::uint64_t x);
         std::uint64_t h_i(std::uint64_t x, std::uint64_t i);
+    public:
+        void build(const std::vector<std::uint64_t> &nums, std::uint64_t k, std::uint64_t c);
         std::uint64_t size();
-        std::uint64_t rand_a();
-        std::uint64_t rand_b();
     };
     template <typename T>
     T isPrime(T const &n);
