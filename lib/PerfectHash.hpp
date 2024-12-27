@@ -2,23 +2,24 @@
 #include <vector>
 #include <random>
 #include <iostream>
+#include <cstdint>
 
 namespace hashlib 
-{
+{   
     class PerfectHash
     {
     private:
-        std::size_t k, c, n, m, a=1, b=0, p;
-        std::vector<std::pair<std::size_t, std::size_t>> hashTable;
-        std::vector<std::vector<std::size_t>> B;
+        std::uint64_t k, c, n, m, a=1, b=0, base_prime, size_;
+        std::vector<std::pair<std::uint64_t, std::uint64_t>> hashTable;
+        std::vector<std::vector<std::uint64_t>> B;
         std::random_device rd;
         std::mt19937 rng{rd()};
     public:
-        void build(std::vector<std::size_t> nums, std::size_t k, std::size_t c);
-        std::size_t h(std::size_t x);
-        std::size_t h_i(std::size_t x, std::size_t i);
-        std::size_t size();
-        std::size_t rand_a();
-        std::size_t rand_b();
+        void build(const std::vector<std::uint64_t> &nums, std::uint64_t k, std::uint64_t c);
+        std::uint64_t h(std::uint64_t x);
+        std::uint64_t h_i(std::uint64_t x, std::uint64_t i);
+        std::uint64_t size();
+        std::uint64_t rand_a();
+        std::uint64_t rand_b();
     };
 }
