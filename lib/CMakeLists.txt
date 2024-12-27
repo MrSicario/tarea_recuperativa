@@ -1,1 +1,1 @@
-add_library(PerfectHash PerfectHash.cpp)
+add_library(lib PerfectHash.cpp)

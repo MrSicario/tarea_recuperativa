@@ -33,7 +33,7 @@ void exp3() {}
 
 int main() {
     
-    int base = 10*10*10*10*10*10*10;
+    int base = 10;
 
     int N = base;
 
@@ -41,7 +41,7 @@ int main() {
     A = create_random_data(N);
     std::println("|S| = {0}", A.size());
 
-    hashlib::PerfectHash hashTable;
+    lib::PerfectHash hashTable;
     hashTable.build(A, 4, 1);
     print("finished with size: {0}\n", hashTable.size());
 }

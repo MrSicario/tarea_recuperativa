@@ -8,7 +8,7 @@ add_executable(tarea
 
 add_subdirectory(lib)
 
-target_link_libraries(tarea PUBLIC PerfectHash)
+target_link_libraries(tarea PUBLIC lib)
 
 target_include_directories(tarea PUBLIC
                            "${PROJECT_BINARY_DIR}"

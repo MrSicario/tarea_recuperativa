@@ -4,13 +4,13 @@
 #include <iostream>
 #include <cstdint>
 
-namespace hashlib 
+namespace lib 
 {   
     class PerfectHash
     {
     private:
         std::uint64_t k, c, n, m, a=1, b=0, base_prime, size_;
-        std::vector<std::pair<std::uint64_t, std::uint64_t>> hashTable;
+        std::vector<std::tuple<std::uint64_t, std::uint64_t, std::uint64_t>> hashTable;
         std::vector<std::vector<std::uint64_t>> B;
         std::random_device rd;
         std::mt19937 rng{rd()};
@@ -22,4 +22,8 @@ namespace hashlib
         std::uint64_t rand_a();
         std::uint64_t rand_b();
     };
+    template <typename T>
+    T isPrime(T const &n);
+    template <typename T>
+    T nextPrime(T const &n);
 }
