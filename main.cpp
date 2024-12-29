@@ -80,7 +80,7 @@ void exp2(Logger &logger)
     println("==============");
     println("Experimento 2: n=10⁶, k in [1.5, 6], c=1;");
     println("--");
-    for (double k=1.5; k<9; k+=0.5)
+    for (double k=2; k<9; k++)
     {
         u64 n = 1'000'000;
         println("Generating {0} nums...", ten_pow_dict[n]);
