@@ -9,22 +9,24 @@ namespace lib
     class PerfectHash
     {
     private:
-        std::uint64_t k, c, n, m, a=1, b=0, base_prime, size_;
-        std::vector<std::tuple<std::uint64_t, std::uint64_t, std::uint64_t>> hashTable;
+        std::uint64_t k, c, n, size_;
+        std::vector<std::pair<std::uint64_t, std::uint64_t>> primes_;
+        std::vector<std::uint64_t> table;
         std::vector<std::vector<std::uint64_t>> B;
         std::random_device rd;
         std::mt19937 rng{rd()};
-        std::uint64_t rand_(std::uint64_t min, std::uint64_t max);
-        std::uint64_t rand_a(std::uint64_t prime = 0);
-        std::uint64_t rand_b(std::uint64_t prime = 0);
         std::uint64_t h(std::uint64_t x);
-        std::uint64_t h_i(std::uint64_t x, std::uint64_t i);
+        std::uint64_t h_i(std::uint64_t x, std::uint64_t i, std::uint64_t l);
+        template <typename T>
+        T isPrime(T const &n);
+        template <typename T>
+        T nextPrime(T const &n);
+        template <typename T>
+        T mod_pow(T base, T exp, T mod);
+        template <typename T>
+        bool miller_rabin(T n, T d, T s);
     public:
         void build(const std::vector<std::uint64_t> &nums, std::uint64_t k, std::uint64_t c);
         std::uint64_t size();
     };
-    template <typename T>
-    T isPrime(T const &n);
-    template <typename T>
-    T nextPrime(T const &n);
 }

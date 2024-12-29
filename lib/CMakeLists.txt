@@ -1,1 +1,1 @@
-add_library(lib PerfectHash.cpp)
+add_library(lib PerfectHash.cpp Logger.cpp)

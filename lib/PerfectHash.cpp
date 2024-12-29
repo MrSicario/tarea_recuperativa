@@ -13,20 +13,19 @@ namespace lib
         this->n = n;
         this->k = k;
         this->c = c;
-        this->m = k*n;
-        this->base_prime = nextPrime(nums.back());
-        this->hashTable.resize(this->m);
-        this->B.resize(this->m);
+        this->B.resize(this->n);
+        this->table.resize(this->n);
         bool finished_table = false;
+        std::uint64_t total_size;
         while (!finished_table)
         {
+            this->primes_.push_back({this->rng(), nextPrime(this->n)});
             std::uint64_t total_size = 0;
-            this->a = rand_a();
-            this->b = rand_b();
-            std::vector<std::vector<std::uint64_t>> B_tmp(this->m);
+            std::vector<std::vector<std::uint64_t>> B_tmp(this->n);
             for (int i=0; i<n; i++)
                 B_tmp[h(nums[i])].push_back(nums[i]);
-            for (int i=0; i<m; i++)
+            std::vector<std::uint64_t> K;
+            for (int i=0; i<n; i++)
             {
                 auto bucket = B_tmp.at(i);
                 if (bucket.empty())
@@ -35,68 +34,59 @@ namespace lib
                 std::vector<std::uint64_t> B_i(B_i_size);
                 this->B[i].resize(B_i_size);
                 total_size += B_i_size;
-                if (bucket.size() == 1)
+                std::uint64_t l = 0;
+                for (l=1; l<10'000; l++)
                 {
-                    std::uint64_t a_i = rand_a(), b_i = rand_b();
-                    this->hashTable[i] = {a_i, b_i, this->base_prime};
-                    B_i[h_i(bucket.back(), i)] = bucket.back();
-                }
-                else
-                {
-                    std::uint64_t prime = nextPrime(bucket.back());
-                    bool finished_B = false;
-                    while (!finished_B) 
+                    bool exists = false;
+                    K.clear();
+                    B_i.clear();
+                    for (int j=0; j<bucket.size(); j++)
                     {
-                        finished_B = true;
-                        std::uint64_t a_i = rand_a(prime), b_i = rand_b(prime);
-                        this->hashTable[i] = {a_i, b_i, prime};
-                        std::vector<bool> hashed(B_i_size, false);
-                        for (int j=0; j<bucket.size(); j++)
-                        {
-                            std::uint64_t hash = h_i(bucket[j], i);
-                            if (hashed.at(hash))
+                        auto const val = bucket[j];
+                        auto const hash = h_i(val, i, l);
+                        for (auto k : K) {
+                            if (k == hash)
                             {
-                                /*
-                                Como los datos son generados al azar,
-                                existe la chance de que haya una cantidad de
-                                elementos repetidos que romperian el esquema
-                                del algoritmo.
-                                */
-                                if (B_i[hash]==bucket[j])
-                                    continue;
-                                finished_B = false;
-                                B_i.clear();
+                                exists = true;
                                 break;
                             }
-                            else
-                            {   
-                                hashed.at(hash) = true;
-                                B_i[hash] = bucket[j];
-                            }
                         }
+                        if (exists)
+                            break;
+                        K.push_back(hash);
+                        B_i[hash] = val;
                     }
+                    if (!exists)
+                        break;
                 }
+                this->table[i] = l;
                 this->B[i] = B_i;
             }
-            if (total_size <= this->m) {
+            if (total_size <= k*n) {
                 finished_table = true;
                 this->size_ = total_size;
+            }
+            else
+            {
+                this->primes_.clear();
+                this->B.clear();
+                this->table.clear();
             }
         }
     }
 
     std::uint64_t PerfectHash::h(std::uint64_t x)
     {
-        std::uint64_t i = ((this->a * x + this->b) % this->base_prime) % this->m;
-        return i;
+        return h_i(x, 0, 0);
     }
 
-    std::uint64_t PerfectHash::h_i(std::uint64_t x, std::uint64_t i)
+    std::uint64_t PerfectHash::h_i(std::uint64_t x, std::uint64_t i, std::uint64_t l)
     {
-        auto [a, b, p] = this->hashTable[i];
-        std::uint64_t m = this->B[i].capacity();
-        std::uint64_t i_ = ((a * x + b) % p) % m;
-        return i_;
+        while (i >= this->primes_.size())
+            this->primes_.push_back({this->rng(), nextPrime(this->primes_.back().second + 1)});
+        auto const [k, p] = this->primes_[i];
+        std::uint64_t mod = l == 0 ? this->n : this->B[i].capacity();
+        return ((k * x) % p) % mod;
     }
 
     std::uint64_t PerfectHash::size()
@@ -104,37 +94,59 @@ namespace lib
         return this->size_;
     }
 
-    std::uint64_t PerfectHash::rand_(std::uint64_t min, std::uint64_t max)
+    template <typename T>
+    T PerfectHash::mod_pow(T base, T exp, T mod)
     {
-        std::uniform_int_distribution<std::uint64_t> dist(min, max);
-        return dist(this->rng);
-    }
-
-    std::uint64_t PerfectHash::rand_a(std::uint64_t prime)
-    {
-        std::uint64_t prime_ = prime == 0 ? this->base_prime : prime;
-        return rand_(1, prime_-1);
-    }
-
-    std::uint64_t PerfectHash::rand_b(std::uint64_t prime)
-    {
-        std::uint64_t prime_ = prime == 0 ? this->base_prime : prime;
-        return rand_(0, prime_-1);
+        if (mod == 1)
+            return 1;
+        T res = 1;
+        base = base % mod;
+        while (exp > 0)
+        {
+            if (exp&1)
+                res = (res * base) % mod;
+            exp = exp >> 1;
+            base = (base * base) % mod;
+        }
+        return res;
     }
 
     template <typename T>
-    T isPrime(T const & n)
+    bool PerfectHash::miller_rabin(T n, T d, T s)
     {
-        if (n % 2 == 0)
-            return false;
-        for (std::int64_t d = 3; d * d <= n; d += 2)
-            if (n % d == 0)
+        std::uniform_int_distribution<T> dist(1, n-1);
+        T a = dist(this->rng);
+        T x = mod_pow(a, d, n);
+        if (x==1 || x==n-1)
+            return true;
+        for (int i=0; i<s; i++)
+        {
+            x = (x * x) % n;
+            if (x==n-1)
+                return true;
+        }
+        return false;
+    }
+
+    template <typename T>
+    T PerfectHash::isPrime(T const & n)
+    {
+        if (n <= 1 || n == 4) return false;
+        if (n <= 3) return true;
+        T s = 0, d = n-1;
+        while (!(d&1))
+        {
+            s++;
+            d = d>>1;
+        }
+        for (int i=0; i<4; i++)
+            if (!miller_rabin(n, d, s))
                 return false;
         return true;
     }
 
     template <typename T>
-    T nextPrime(T const & i)
+    T PerfectHash::nextPrime(T const & i)
     {
         if (i <= 2) return 2;
         for (T j = i | 1;; j += 2)

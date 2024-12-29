@@ -4,17 +4,21 @@
 #include <vector>     // vector
 #include <map>
 #include <string>
+#include <format>
 #include <iterator>   // begin, end, and ostream_iterator
 #include <functional> // bind
 #include <cstdint>
 #include <iostream>
 #include <print>
 #include "lib/PerfectHash.hpp"
+#include "lib/Logger.hpp"
 
 using 
     lib::PerfectHash,
+    lib::Logger,
     std::print,
     std::println,
+    std::format,
     std::size_t,
     std::chrono::high_resolution_clock, 
     std::chrono::duration_cast,
@@ -24,7 +28,6 @@ using
     std::string;
 
 typedef std::uint64_t u64;
-
 
 vector<u64> create_random_data(int n) {
     std::random_device r;
@@ -37,23 +40,25 @@ vector<u64> create_random_data(int n) {
     return v;
 }
 
+map<int, string> ten_pow_dict = {
+    {10, "10¹"},
+    {100, "10²"},
+    {1'000, "10³"},
+    {10'000, "10⁴"},
+    {100'000, "10⁵"},
+    {1'000'000, "10⁶"},
+    {10'000'000, "10⁷"}
+};
+
 // Experiment 1
-void exp1() 
+void exp1(Logger &logger) 
 {
-    map<int, string> ten_pow_dict = {
-        {10, "10¹"},
-        {100, "10²"},
-        {1000, "10³"},
-        {10000, "10⁴"},
-        {100000, "10⁵"},
-        {1000000, "10⁶"},
-        {10000000, "10⁷"}
-    };
-    println("Experimento 1: n in [10, 10⁷], k=4, c=1;");
     println("==============");
-    for (int n=10; n<100000000; n*=10)
+    println("Experimento 1: n in [10, 10⁷], k=4, c=1;");
+    println("--");
+    for (int n=10; n<100'000'000; n*=10)
     {
-        println("Generating S -> |S| = n = {0}", ten_pow_dict[n]);
+        println("Generating {0} nums...", ten_pow_dict[n]);
         vector<u64> S = create_random_data(n);
         PerfectHash hash_table;
         println("Building hashtable...");
@@ -61,51 +66,67 @@ void exp1()
         hash_table.build(S, 4, 1);
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<milliseconds>(stop-start);
-        println(" => {1}s", ten_pow_dict[n], duration.count()/(float)1000);
+        string msg = format("n= {0} => time= {1}s, space= {2}", ten_pow_dict[n], duration.count()/(float)1'000, hash_table.size());
+        println("{0}", msg);
+        logger.log(lib::EXP1, msg);
         println("--");
     }
+    println("==============");
 }
 
 // Experiment 2
-void exp2() 
+void exp2(Logger &logger) 
 {
-    println("Experimento 2:");
     println("==============");
-    println("n=10⁶, k in [2, 8], c=1;");
-    for (int k=2; k<9; k++)
+    println("Experimento 2: n=10⁶, k in [1.5, 6], c=1;");
+    println("--");
+    for (double k=1.5; k<9; k+=0.5)
     {
-        u64 n = 1000000;
+        u64 n = 1'000'000;
+        println("Generating {0} nums...", ten_pow_dict[n]);
         vector<u64> S = create_random_data(n);
         PerfectHash hash_table;
+        println("Building hashtable...");
         auto start = high_resolution_clock::now();
         hash_table.build(S, k, 1);
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<milliseconds>(stop-start);
-        println("\tn={0} => {1}s", n, duration.count()/(float)1000);
+        string msg = format("k= {0} => time= {1}s, size= {2}", k, duration.count()/(float)1'000, hash_table.size());
+        println("{0}", msg);
+        logger.log(lib::EXP2, msg);
+        println("--");
     }
 }
 
 // Experiment 3
-void exp3() 
+void exp3(Logger &logger) 
 {
-    println("Experimento 3:");
     println("==============");
-    println("n=10⁶, k=4, c in [1, 4];");
+    println("Experimento 3: n=10⁶, k=4, c in [1, 4);");
+    println("--");
     for (int c=1; c<5; c++)
     {
-        u64 n = 1000000;
+        u64 n = 1'000'000;
+        println("Generating {0} nums...", ten_pow_dict[n]);
         vector<u64> S = create_random_data(n);
         PerfectHash hash_table;
+        println("Building hashtable...");
         auto start = high_resolution_clock::now();
-        hash_table.build(S, 4, 1);
+        hash_table.build(S, 4, c);
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<milliseconds>(stop-start);
-        println("\tn={0} => {1}s", n, duration.count()/(float)1000);
+        string msg = format("c= {0} => time= {1}s, size= {2}", c, duration.count()/(float)1'000, hash_table.size());
+        println("{0}", msg);
+        logger.log(lib::EXP3, msg);
+        println("--");
     }
 }
 
 int main() {
-    exp1();
-    exp2();
-    exp3();
+
+    Logger logger("log.txt");
+
+    exp1(logger);
+    exp2(logger);
+    exp3(logger);
 }
