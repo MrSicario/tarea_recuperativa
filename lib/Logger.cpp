@@ -11,12 +11,18 @@ namespace lib
     {
         switch (level)
         {
-            case EXP1:
-                return "EXP1";
-            case EXP2:
-                return "EXP2";
-            case EXP3:
-                return "EXP3";
+            case DEBUG:
+                return "DEBUG";
+            case INFO:
+                return "INFO";
+            case WARNING:
+                return "WARNING";
+            case ERROR:
+                return "ERROR";
+            case CRITICAL:
+                return "CRITICAL";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -37,7 +43,7 @@ namespace lib
             log_file.close();
     }
 
-    void Logger::log(LogLevel level, std::string &message)
+    void Logger::log(LogLevel level, std::string const &message)
     {
         // Timestamp
         auto const time = std::chrono::current_zone()->to_local(std::chrono::system_clock::now());

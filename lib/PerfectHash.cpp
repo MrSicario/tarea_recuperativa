@@ -3,11 +3,18 @@
 #include <print>
 #include <cstdint>
 #include <algorithm>
+#include <chrono>
 #include "PerfectHash.hpp"
 
 namespace lib 
 {   
-    void PerfectHash::build(const std::vector<std::uint64_t> &nums, std::uint64_t k, std::uint64_t c)
+
+    int timer(std::chrono::_V2::system_clock::time_point start, std::chrono::_V2::system_clock::time_point stop)
+    {
+        return std::chrono::duration_cast<std::chrono::minutes>(stop-start).count();
+    }
+
+    int PerfectHash::build(const std::vector<std::uint64_t> &nums, std::uint64_t k, std::uint64_t c, int time_limit)
     {
         std::uint64_t n = nums.size();
         this->n = n;
@@ -15,9 +22,9 @@ namespace lib
         this->c = c;
         this->B.resize(this->n);
         this->table.resize(this->n);
-        bool finished_table = false;
-        std::uint64_t total_size;
-        while (!finished_table)
+        auto start = std::chrono::high_resolution_clock::now();
+        auto now_ = std::chrono::high_resolution_clock::now();
+        while (timer(start, now_) <= time_limit)
         {
             this->primes_.push_back({this->rng(), nextPrime(this->n)});
             std::uint64_t total_size = 0;
@@ -32,7 +39,6 @@ namespace lib
                     continue;
                 int B_i_size = bucket.size() * bucket.size() * c;
                 std::vector<std::uint64_t> B_i(B_i_size);
-                this->B[i].resize(B_i_size);
                 total_size += B_i_size;
                 std::uint64_t l = 0;
                 for (l=1; l<10'000; l++)
@@ -43,7 +49,7 @@ namespace lib
                     for (int j=0; j<bucket.size(); j++)
                     {
                         auto const val = bucket[j];
-                        auto const hash = h_i(val, i, l);
+                        auto const hash = h_i(val, i, l, B_i_size);
                         for (auto k : K) {
                             if (k == hash)
                             {
@@ -62,9 +68,10 @@ namespace lib
                 this->table[i] = l;
                 this->B[i] = B_i;
             }
+            now_ = std::chrono::high_resolution_clock::now();
             if (total_size <= k*n) {
-                finished_table = true;
                 this->size_ = total_size;
+                break;
             }
             else
             {
@@ -73,19 +80,23 @@ namespace lib
                 this->table.clear();
             }
         }
+        if (timer(start, now_) <= time_limit)
+            return 0;
+        else
+            return 1;
     }
 
     std::uint64_t PerfectHash::h(std::uint64_t x)
     {
-        return h_i(x, 0, 0);
+        return h_i(x, 0, 0, 0);
     }
 
-    std::uint64_t PerfectHash::h_i(std::uint64_t x, std::uint64_t i, std::uint64_t l)
+    std::uint64_t PerfectHash::h_i(std::uint64_t x, std::uint64_t i, std::uint64_t l, std::uint64_t size)
     {
         while (i >= this->primes_.size())
             this->primes_.push_back({this->rng(), nextPrime(this->primes_.back().second + 1)});
         auto const [k, p] = this->primes_[i];
-        std::uint64_t mod = l == 0 ? this->n : this->B[i].capacity();
+        std::uint64_t mod = l == 0 ? this->n : size;
         return ((k * x) % p) % mod;
     }
 

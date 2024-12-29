@@ -16,7 +16,7 @@ namespace lib
         std::random_device rd;
         std::mt19937 rng{rd()};
         std::uint64_t h(std::uint64_t x);
-        std::uint64_t h_i(std::uint64_t x, std::uint64_t i, std::uint64_t l);
+        std::uint64_t h_i(std::uint64_t val, std::uint64_t i, std::uint64_t l, std::uint64_t size);
         template <typename T>
         T isPrime(T const &n);
         template <typename T>
@@ -26,7 +26,7 @@ namespace lib
         template <typename T>
         bool miller_rabin(T n, T d, T s);
     public:
-        void build(const std::vector<std::uint64_t> &nums, std::uint64_t k, std::uint64_t c);
+        int build(const std::vector<std::uint64_t> &nums, std::uint64_t k, std::uint64_t c, int time_limit = 1);
         std::uint64_t size();
     };
 }

@@ -5,9 +5,11 @@ namespace lib
 {
     enum LogLevel
     {
-        EXP1,
-        EXP2,
-        EXP3
+        DEBUG,
+        INFO,
+        WARNING,
+        ERROR,
+        CRITICAL
     };
     class Logger
     {
@@ -17,6 +19,6 @@ namespace lib
         public:
             Logger(const std::string &filename);
             ~Logger();
-            void log(LogLevel level, std::string &message);
+            void log(LogLevel level, std::string const &message);
     };
 }
