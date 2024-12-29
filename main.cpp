@@ -69,7 +69,7 @@ void exp1(Logger &logger)
         hash_table.build(S, 4, 1, 15);
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<milliseconds>(stop-start);
-        string msg = format("n= {0} => time= {1}s, space= {2}", ten_pow_dict[n], duration.count()/(float)1'000, hash_table.size());
+        string msg = format("n= {0} => time= {1}s, size= {2}", ten_pow_dict[n], duration.count()/(float)1'000, hash_table.size());
         println("{0}", msg);
         logger.log(INFO, msg);
         println("--");
