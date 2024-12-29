@@ -92,12 +92,21 @@ void exp2(Logger &logger)
         PerfectHash hash_table;
         println("Building hashtable...");
         auto start = high_resolution_clock::now();
-        hash_table.build(S, k, 1);
+        int error_code = hash_table.build(S, k, 1);
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<milliseconds>(stop-start);
-        string msg = format("k= {0} => time= {1}s, size= {2}", k, duration.count()/(float)1'000, hash_table.size());
-        println("{0}", msg);
-        logger.log(INFO, msg);
+        if (error_code)
+        {
+            string msg = format("k={0} => Exceeded time limit: {1}s", k, duration.count()/(float)1'000);
+            println("{0}", msg);
+            logger.log(ERROR, msg);
+        }
+        else
+        {
+            string msg = format("k= {0} => time= {1}s, size= {2}", k, duration.count()/(float)1'000, hash_table.size());
+            println("{0}", msg);
+            logger.log(INFO, msg);
+        }
         println("--");
     }
 }
@@ -141,11 +150,11 @@ void exp4(Logger &logger)
 {
     logger.log(INFO, "Experiment 4");
     println("==============");
-    println("Experimento 4: n=10⁶, k in [2, 6], c in [1, k];");
+    println("Experimento 4: n=10⁶, k in [2, 8], c in [1, k];");
     println("--");
-    for (int k=2; k<7; k++)
+    for (int k=2; k<9; k++)
     {
-        for (int c=1; c<(k+1); c++)
+        for (int c=1; c<=k; c++)
         {
             u64 n = 1'000'000;
             println("Generating {0} nums...", ten_pow_dict[n]);
