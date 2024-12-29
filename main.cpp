@@ -97,7 +97,7 @@ void exp2(Logger &logger)
         auto duration = duration_cast<milliseconds>(stop-start);
         if (error_code)
         {
-            string msg = format("k={0} => Exceeded time limit: {1}s", k, duration.count()/(float)1'000);
+            string msg = format("k= {0} => Exceeded time limit: {1}s", k, duration.count()/(float)1'000);
             println("{0}", msg);
             logger.log(ERROR, msg);
         }
@@ -131,7 +131,7 @@ void exp3(Logger &logger)
         auto duration = duration_cast<milliseconds>(stop-start);
         if (error_code)
         {
-            string msg = format("c={0} => Exceeded time limit: {1}s", c, duration.count()/(float)1'000);
+            string msg = format("c= {0} => Exceeded time limit: {1}s", c, duration.count()/(float)1'000);
             println("{0}", msg);
             logger.log(ERROR, msg);
         }
@@ -167,7 +167,7 @@ void exp4(Logger &logger)
             auto duration = duration_cast<milliseconds>(stop-start);
             if (error_code)
             {
-                string msg = format("k={2} & c={0} => Exceeded time limit: {1}s", c, duration.count()/(float)1'000, k);
+                string msg = format("k= {2} & c= {0} => Exceeded time limit: {1}s", c, duration.count()/(float)1'000, k);
                 println("{0}", msg);
                 logger.log(ERROR, msg);
             }
