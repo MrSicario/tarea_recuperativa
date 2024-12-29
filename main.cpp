@@ -78,7 +78,7 @@ void exp1(Logger &logger)
 void exp2(Logger &logger) 
 {
     println("==============");
-    println("Experimento 2: n=10⁶, k in [1.5, 6], c=1;");
+    println("Experimento 2: n=10⁶, k in [2, 8], c=1;");
     println("--");
     for (double k=2; k<9; k++)
     {
