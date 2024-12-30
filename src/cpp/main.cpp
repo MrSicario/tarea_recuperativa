@@ -1,15 +1,13 @@
-#include <chrono>
+#include <chrono>     // time measuring
 #include <random>     // mt19937 and uniform_int_distribution
 #include <algorithm>  // generate
 #include <vector>     // vector
+#include <iterator>   // begin, end, and ostream_iterator
+#include <functional> // bind
+#include <cstdint>    // uint64_t
 #include <map>
 #include <string>
 #include <format>
-#include <iterator>   // begin, end, and ostream_iterator
-#include <functional> // bind
-#include <cstdint>
-#include <iostream>
-#include <print>
 #include "lib/PerfectHash.hpp"
 #include "lib/Logger.hpp"
 
@@ -56,41 +54,28 @@ map<int, string> ten_pow_dict = {
 void exp1(Logger &logger) 
 {
     logger.log(INFO, "Experiment 1");
-    println("==============");
-    println("Experimento 1: n in [10, 10⁷], k=4, c=1;");
-    println("--");
     for (int n=10; n<100'000'000; n*=10)
     {
-        println("Generating {0} nums...", ten_pow_dict[n]);
         vector<u64> S = create_random_data(n);
         PerfectHash hash_table;
-        println("Building hashtable...");
         auto start = high_resolution_clock::now();
         hash_table.build(S, 4, 1, 15);
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<milliseconds>(stop-start);
         string msg = format("n= {0} => time= {1}s, size= {2}", ten_pow_dict[n], duration.count()/(float)1'000, hash_table.size());
-        println("{0}", msg);
         logger.log(INFO, msg);
-        println("--");
     }
-    println("==============");
 }
 
 // Experiment 2
 void exp2(Logger &logger) 
 {
     logger.log(INFO, "Experiment 2");
-    println("==============");
-    println("Experimento 2: n=10⁶, k in [2, 8], c=1;");
-    println("--");
-    for (double k=2; k<9; k++)
+    for (double k=1; k<9; k++)
     {
         u64 n = 1'000'000;
-        println("Generating {0} nums...", ten_pow_dict[n]);
         vector<u64> S = create_random_data(n);
         PerfectHash hash_table;
-        println("Building hashtable...");
         auto start = high_resolution_clock::now();
         int error_code = hash_table.build(S, k, 1);
         auto stop = high_resolution_clock::now();
@@ -98,16 +83,13 @@ void exp2(Logger &logger)
         if (error_code)
         {
             string msg = format("k= {0} => Exceeded time limit: {1}s", k, duration.count()/(float)1'000);
-            println("{0}", msg);
             logger.log(ERROR, msg);
         }
         else
         {
             string msg = format("k= {0} => time= {1}s, size= {2}", k, duration.count()/(float)1'000, hash_table.size());
-            println("{0}", msg);
             logger.log(INFO, msg);
         }
-        println("--");
     }
 }
 
@@ -115,16 +97,11 @@ void exp2(Logger &logger)
 void exp3(Logger &logger) 
 {
     logger.log(INFO, "Experiment 3");
-    println("==============");
-    println("Experimento 3: n=10⁶, k=4, c in [1, 4];");
-    println("--");
     for (int c=1; c<5; c++)
     {
         u64 n = 1'000'000;
-        println("Generating {0} nums...", ten_pow_dict[n]);
         vector<u64> S = create_random_data(n);
         PerfectHash hash_table;
-        println("Building hashtable...");
         auto start = high_resolution_clock::now();
         int error_code = hash_table.build(S, 4, c);
         auto stop = high_resolution_clock::now();
@@ -132,16 +109,13 @@ void exp3(Logger &logger)
         if (error_code)
         {
             string msg = format("c= {0} => Exceeded time limit: {1}s", c, duration.count()/(float)1'000);
-            println("{0}", msg);
             logger.log(ERROR, msg);
         }
         else
         {
             string msg = format("c= {0} => time= {1}s, size= {2}", c, duration.count()/(float)1'000, hash_table.size());
-            println("{0}", msg);
             logger.log(INFO, msg);
         }
-        println("--");
     }
 }
 
@@ -149,18 +123,13 @@ void exp3(Logger &logger)
 void exp4(Logger &logger)
 {
     logger.log(INFO, "Experiment 4");
-    println("==============");
-    println("Experimento 4: n=10⁶, k in [2, 8], c in [1, k];");
-    println("--");
-    for (int k=2; k<9; k++)
+    for (int k=1; k<9; k++)
     {
         for (int c=1; c<=k; c++)
         {
             u64 n = 1'000'000;
-            println("Generating {0} nums...", ten_pow_dict[n]);
             vector<u64> S = create_random_data(n);
             PerfectHash hash_table;
-            println("Building hashtable...");
             auto start = high_resolution_clock::now();
             int error_code = hash_table.build(S, k, c);
             auto stop = high_resolution_clock::now();
@@ -168,16 +137,13 @@ void exp4(Logger &logger)
             if (error_code)
             {
                 string msg = format("k= {2} & c= {0} => Exceeded time limit: {1}s", c, duration.count()/(float)1'000, k);
-                println("{0}", msg);
                 logger.log(ERROR, msg);
             }
             else
             {
                 string msg = format("k= {3} & c= {0} => time= {1}s, size= {2}", c, duration.count()/(float)1'000, hash_table.size(), k);
-                println("{0}", msg);
                 logger.log(INFO, msg);
             }
-            println("--");
         }
     }
 }

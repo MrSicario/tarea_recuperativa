@@ -3,10 +3,10 @@ project(Tarea_Recuperativa_Log)
 set(CMAKE_CXX_STANDARD 23)
 
 add_executable(tarea
-        main.cpp
+        src/cpp/main.cpp
 )
 
-add_subdirectory(lib)
+add_subdirectory(src/cpp/lib)
 
 target_link_libraries(tarea PUBLIC lib)
 

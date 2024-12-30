@@ -1,6 +1,5 @@
 #include <fstream>
-#include <iostream>
-#include <sstream>
+#include <print>
 #include <chrono>
 #include <format>
 #include "Logger.hpp"
@@ -46,23 +45,17 @@ namespace lib
     void Logger::log(LogLevel level, std::string const &message)
     {
         // Timestamp
-        auto const time = std::chrono::current_zone()->to_local(std::chrono::system_clock::now());
-        std::string const timestamp = std::format("[{:%Y-%m-%d %X}] ", time);
+        auto const timestamp = std::chrono::current_zone()->to_local(std::chrono::system_clock::now());
         // Create log entry
-        std::ostringstream logEntry;
-        logEntry << timestamp << level_to_string(level) << ": " << message
-                 << std::endl;
+        std::string const log_entry = std::format("[{0:%Y-%m-%d %X}] {1}: {2}", timestamp, level_to_string(level), message);
 
-        /*
         // Output to console
-        std::cout << logEntry.str();
-        */
+        std::println("{}", log_entry);
 
         // Output to log file
         if (log_file.is_open()) {
-            log_file << logEntry.str();
-            log_file
-                .flush(); // Ensure immediate write to file
+            std::println(log_file, "{}", log_entry);
+            log_file.flush(); // Ensure immediate write to file
         }
     }
 }
