@@ -12,7 +12,7 @@ ax.set(xlabel="|S|", xscale="log",
        ylabel="time [s]", yscale="log",
        title="Array size Vs Construction time")
 ax.grid(alpha=0.5)
-fig.savefig("figures/linear_time.png")
+fig.savefig("../typ/images/linear_time.png")
 ax.cla()
 
 ax.plot(json_data["exp1"]["n"], json_data["exp1"]["size"], 'D--', color="#037971")
@@ -20,7 +20,7 @@ ax.set(xlabel="|S|", xscale="log",
        ylabel="|Hash table|", yscale="log",
        title="Array size Vs Hash table size")
 ax.grid(alpha=0.5)
-fig.savefig("figures/linear_size.png")
+fig.savefig("../typ/images/linear_size.png")
 ax.cla()
 
 time_mean = sum(json_data["exp2"]["time"][1:])/len(json_data["exp2"]["time"][1:])
@@ -31,7 +31,7 @@ ax.set(xlabel="k",
        ylabel="time [s]",
        title="Constant 'k' Vs Construction time")
 ax.grid(alpha=0.5)
-fig.savefig("figures/k_time.png")
+fig.savefig("../typ/images/k_time.png")
 ax.cla()
 
 size_mean = sum(json_data["exp2"]["size"][1:])/len(json_data["exp2"]["size"][1:])
@@ -42,7 +42,7 @@ ax.set(xlabel="k",
        ylabel="|Hash table|",
        title="Constant 'k' Vs Hash table size")
 ax.grid(alpha=0.5)
-fig.savefig("figures/k_size.png")
+fig.savefig("../typ/images/k_size.png")
 ax.cla()
 
 ax.plot(json_data["exp3"]["c"][:2], json_data["exp3"]["time"][:2], 'D--', color="#037971")
@@ -50,7 +50,7 @@ ax.set(xlabel="c",
        ylabel="|Hash table|",
        title="Constant 'c' Vs Construction time")
 ax.grid(alpha=0.5)
-fig.savefig("figures/c_time.png")
+fig.savefig("../typ/images/c_time.png")
 ax.cla()
 
 ax.plot(json_data["exp3"]["c"][:2], json_data["exp3"]["size"][:2], 'D--', color="#037971")
@@ -58,7 +58,7 @@ ax.set(xlabel="c",
        ylabel="|Hash table|",
        title="Constant 'c' Vs Hash table size")
 ax.grid(alpha=0.5)
-fig.savefig("figures/c_size.png")
+fig.savefig("../typ/images/c_size.png")
 ax.cla()
 
 def color_picker(n : int):
@@ -100,4 +100,4 @@ ax.set(xlabel="Size of Hash table",
        ylabel="Time [s]",
        title="Scatter graph of 'k' & 'c'")
 ax.grid(alpha=0.5)
-fig.savefig("figures/scatter.png")
+fig.savefig("../typ/images/scatter.png")
