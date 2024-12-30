@@ -1,8 +1,6 @@
 #include <vector>
 #include <random>
-#include <print>
 #include <cstdint>
-#include <algorithm>
 #include <chrono>
 #include "PerfectHash.hpp"
 
