@@ -8,12 +8,6 @@
 
 namespace lib 
 {   
-
-    int timer(std::chrono::_V2::system_clock::time_point start, std::chrono::_V2::system_clock::time_point stop)
-    {
-        return std::chrono::duration_cast<std::chrono::minutes>(stop-start).count();
-    }
-
     int PerfectHash::build(const std::vector<std::uint64_t> &nums, std::uint64_t k, std::uint64_t c, int time_limit)
     {
         std::uint64_t n = nums.size();
@@ -80,6 +74,7 @@ namespace lib
                 this->table.clear();
             }
         }
+        this->time_ = std::chrono::duration_cast<std::chrono::milliseconds>(now_-start).count() / 1e3;
         if (timer(start, now_) <= time_limit)
             return 0;
         else
@@ -103,6 +98,11 @@ namespace lib
     std::uint64_t PerfectHash::size()
     {
         return this->size_;
+    }
+
+    float PerfectHash::time()
+    {
+        return this->time_;
     }
 
     template <typename T>
@@ -163,5 +163,10 @@ namespace lib
         for (T j = i | 1;; j += 2)
             if (isPrime(j))
                 return j;
+    }
+
+    float PerfectHash::timer(std::chrono::_V2::system_clock::time_point start, std::chrono::_V2::system_clock::time_point stop)
+    {
+        return std::chrono::duration_cast<std::chrono::milliseconds>(stop-start).count() / 6e4;
     }
 }

@@ -1,4 +1,3 @@
-#include <chrono>     // time measuring
 #include <random>     // mt19937 and uniform_int_distribution
 #include <algorithm>  // generate
 #include <vector>     // vector
@@ -20,9 +19,6 @@ using
     std::println,
     std::format,
     std::size_t,
-    std::chrono::high_resolution_clock, 
-    std::chrono::duration_cast,
-    std::chrono::milliseconds,
     std::vector,
     std::map,
     std::string;
@@ -41,13 +37,13 @@ vector<u64> create_random_data(int n) {
 }
 
 map<int, string> ten_pow_dict = {
-    {10, "10¹"},
-    {100, "10²"},
-    {1'000, "10³"},
-    {10'000, "10⁴"},
-    {100'000, "10⁵"},
-    {1'000'000, "10⁶"},
-    {10'000'000, "10⁷"}
+    {10, "1e1"},
+    {100, "1e2"},
+    {1'000, "1e3"},
+    {10'000, "1e4"},
+    {100'000, "1e5"},
+    {1'000'000, "1e6"},
+    {10'000'000, "1e7"}
 };
 
 // Experiment 1
@@ -57,12 +53,9 @@ void exp1(Logger &logger)
     for (int n=10; n<100'000'000; n*=10)
     {
         vector<u64> S = create_random_data(n);
-        PerfectHash hash_table;
-        auto start = high_resolution_clock::now();
-        hash_table.build(S, 4, 1, 15);
-        auto stop = high_resolution_clock::now();
-        auto duration = duration_cast<milliseconds>(stop-start);
-        string msg = format("n= {0} => time= {1}s, size= {2}", ten_pow_dict[n], duration.count()/(float)1'000, hash_table.size());
+        PerfectHash ht;
+        ht.build(S, 4, 1, 15);
+        string msg = format("n= {0} => time= {1}s, size= {2}", ten_pow_dict[n], ht.time(), ht.size());
         logger.log(INFO, msg);
     }
 }
@@ -75,19 +68,16 @@ void exp2(Logger &logger)
     {
         u64 n = 1'000'000;
         vector<u64> S = create_random_data(n);
-        PerfectHash hash_table;
-        auto start = high_resolution_clock::now();
-        int error_code = hash_table.build(S, k, 1);
-        auto stop = high_resolution_clock::now();
-        auto duration = duration_cast<milliseconds>(stop-start);
+        PerfectHash ht;
+        int error_code = ht.build(S, k, 1);
         if (error_code)
         {
-            string msg = format("k= {0} => Exceeded time limit: {1}s", k, duration.count()/(float)1'000);
+            string msg = format("k= {0} => Exceeded time limit: {1}s", k, ht.time());
             logger.log(ERROR, msg);
         }
         else
         {
-            string msg = format("k= {0} => time= {1}s, size= {2}", k, duration.count()/(float)1'000, hash_table.size());
+            string msg = format("k= {0} => time= {1}s, size= {2}", k, ht.time(), ht.size());
             logger.log(INFO, msg);
         }
     }
@@ -101,19 +91,16 @@ void exp3(Logger &logger)
     {
         u64 n = 1'000'000;
         vector<u64> S = create_random_data(n);
-        PerfectHash hash_table;
-        auto start = high_resolution_clock::now();
-        int error_code = hash_table.build(S, 4, c);
-        auto stop = high_resolution_clock::now();
-        auto duration = duration_cast<milliseconds>(stop-start);
+        PerfectHash ht;
+        int error_code = ht.build(S, 4, c);
         if (error_code)
         {
-            string msg = format("c= {0} => Exceeded time limit: {1}s", c, duration.count()/(float)1'000);
+            string msg = format("c= {0} => Exceeded time limit: {1}s", c, ht.time());
             logger.log(ERROR, msg);
         }
         else
         {
-            string msg = format("c= {0} => time= {1}s, size= {2}", c, duration.count()/(float)1'000, hash_table.size());
+            string msg = format("c= {0} => time= {1}s, size= {2}", c, ht.time(), ht.size());
             logger.log(INFO, msg);
         }
     }
@@ -129,19 +116,16 @@ void exp4(Logger &logger)
         {
             u64 n = 1'000'000;
             vector<u64> S = create_random_data(n);
-            PerfectHash hash_table;
-            auto start = high_resolution_clock::now();
-            int error_code = hash_table.build(S, k, c);
-            auto stop = high_resolution_clock::now();
-            auto duration = duration_cast<milliseconds>(stop-start);
+            PerfectHash ht;
+            int error_code = ht.build(S, k, c);
             if (error_code)
             {
-                string msg = format("k= {2} & c= {0} => Exceeded time limit: {1}s", c, duration.count()/(float)1'000, k);
+                string msg = format("k= {2} & c= {0} => Exceeded time limit: {1}s", c, ht.time(), k);
                 logger.log(ERROR, msg);
             }
             else
             {
-                string msg = format("k= {3} & c= {0} => time= {1}s, size= {2}", c, duration.count()/(float)1'000, hash_table.size(), k);
+                string msg = format("k= {3} & c= {0} => time= {1}s, size= {2}", c, ht.time(), ht.size(), k);
                 logger.log(INFO, msg);
             }
         }
