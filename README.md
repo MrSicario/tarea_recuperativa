@@ -24,7 +24,7 @@ Utilizar CMake para armar y compilar la tarea.
 
 ### Typst
 
-Utilizar `typst-cli` para compilar `main.typ`
+Utilizar `typst-cli` para compilar `src/typ/main.typ`
 
 ## Ejecución
 

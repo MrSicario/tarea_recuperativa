@@ -21,9 +21,9 @@ namespace lib
             this->primes_.push_back({this->rng(), nextPrime(this->n)});
             std::uint64_t total_size = 0;
             std::vector<std::vector<std::uint64_t>> B_tmp(this->n);
+            std::vector<std::uint64_t> K;
             for (int i=0; i<n; i++)
                 B_tmp[h(nums[i])].push_back(nums[i]);
-            std::vector<std::uint64_t> K;
             for (int i=0; i<n; i++)
             {
                 auto bucket = B_tmp.at(i);

@@ -2,7 +2,7 @@
 
 #let titulo = "Tarea Recuperativa"
 #let subtitulo = "Hashing Perfecto"
-#let tema = "Informe de Implementación"
+#let tema = "Informe de Implementación & Resultados"
 
 #let departamento = minerva.departamentos.dcc
 #let curso = "CC4102 - Diseño y Análisis de Algoritmos"
