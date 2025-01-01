@@ -79,6 +79,12 @@ La construcción de la tabla de hash perfecto sigue de la siguiente forma:
 #pagebreak()
 
 = Resultados
+
+Los experimentos se ejecutaron en un notebook HP Envy con:
+- Fedora 41
+- 11th Gen Intel® Core™ i7-1165G7 × 8
+- 16 GiB RAM
+
 == Experimento 1
 #figure(
   caption: "Resultados Experimento 1",
